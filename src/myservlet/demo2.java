@@ -7,10 +7,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URLDecoder;
 
 @WebServlet(name = "demo2")
 public class demo2 extends HttpServlet {
+	private static String name;
+
+	public static String getName() {
+		return name;
+	}
+
+	public static void setName(String name) {
+		demo2.name = name;
+	}
+
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 //		String referer = request.getHeader("Referer");
 //		if(referer == null || !referer.contains("localhost:8080/index.jsp")){
@@ -37,7 +47,7 @@ public class demo2 extends HttpServlet {
 		response.setContentType("text/html;charset=UTF-8");
 		response.getWriter().write(username);*/
 
-
+		Cookie cookie = new Cookie("D","DDS");
 		Cookie[] cookies = request.getCookies();
 		for (int i = 0; i < cookies.length; i++){
 			String name = cookies[i].getName();
@@ -46,6 +56,7 @@ public class demo2 extends HttpServlet {
 		}
 	}
 
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doPost(request,response);
 	}

@@ -1,0 +1,115 @@
+<script type="text/javascript" src="../js/setConfig.js"></script>
+<script type="text/javascript">function resetEpgMode() {
+    if (typeof (ztebw) != 'undefined' && ztebw != null) {
+        var epgmode = ztebw.configRead("EPGSizeType");
+        if (epgmode == 6) {
+            setPriorCriteria('0');
+            SetConfig('SetEpgMode', '720P');       //SetConfig('SetEpgMode', '720P');           }  }}function writeConfig(ioStr, wrStr){  if(window.navigator.appName.indexOf("ztebw")>=0)  {    var dev = new Device("config");    dev.open();    dev.ioctl(ioStr);    dev.write(wrStr);    dev.close();  }}function authStbByMarkcode(){   var marketcodeconfig = "-1";   var result = true;   if(marketcodeconfig == -1)  //-1,???��?��?��??????marketcode   {	   return result;   }   if(typeof(ztebw) == "object" && "ioctlRead" in ztebw)   {	   var marketcodeStb = ztebw.ioctlRead("MarketCode");	   if(marketcodeStb != marketcodeconfig) 	   {		    result = false;	   }   }   return result;}function getStbid(){   var stbid = '';   if (typeof(ztebw) != 'undefined' && ztebw != null && typeof(ztebw.ioctlRead) == 'function')   {	   stbid = ztebw.ioctlRead("infoHWSN");   }   return stbid;}function getStbType(){   var stbtype = '';   if (typeof(ztebw) != 'undefined' && ztebw != null && typeof(ztebw.ioctlRead) == 'function')   {	   stbtype = GetConfig("STBType");   }   return stbtype;}resetEpgMode();	writeConfig("show_pageloadingbar","no");</script>
+<html>
+<head></head>
+<script type="text/javascript">    function getencry() {
+    var authStbResult = authStbByMarkcode();
+    if (!authStbResult) {
+        window.location = "/iptvepg" + "/initframe/eas/errorHandler.jsp?" + "tips=EPGActM0687&" + "ErrorCode=50119221";
+        return;
+    }
+    var stbid = getStbid();
+    var stbtype = getStbType();
+    document.location = "getencrypttoken.jsp?UserID=dxrmcs-chezai&Action=Login&TerminalFlag=1&TerminalOsType=0" + "&STBID=" + stbid + "&stbtype=" + stbtype;
+}  </script>
+<body bgcolor="#000000" onload="getencry()">
+<html>
+<style type="text/css">    .tipSD {
+    bottom: 50;
+    width: 100%;
+    height: 32;
+    text-align: center;
+    position: absolute
+}
+
+.tipHD {
+    bottom: 100;
+    width: 100%;
+    height: 35;
+    text-align: center;
+    position: absolute
+}</style>
+<body>
+<div><img id='imageBackground'></div>
+<div id='tip'></div>
+</body>
+</html>
+<script type="text/javascript">    function writeConfig(ioStr, wrStr) {
+    if (window.navigator.appName.indexOf("ztebw") >= 0) {
+        var dev = new Device("config");
+        dev.open();
+        dev.ioctl(ioStr);
+        dev.write(wrStr);
+        dev.close();
+    }
+}
+
+writeConfig("show_pageloadingbar", "no");
+
+function getDefinitionFromStb() {
+    var definition = false;
+    if (typeof (ztebw) != 'undefined' && ztebw != null) {
+        var epgmode = ztebw.configRead("EPGSizeType");
+        if (epgmode == 4 || epgmode == 6) {
+            definition = true;
+        }
+    }
+    return definition;
+}
+
+function getImgUrlFromStb(isHD) {
+    var imgPath = "";
+    if (typeof (ztebw) == "object" && "ioctlRead" in ztebw) {
+        if (isHD == undefined || isHD == false) {
+            imgPath = ztebw.ioctlRead("MTELoadingPicSDPath");
+        } else {
+            imgPath = ztebw.ioctlRead("MTELoadingPicHDPath");
+        }
+        if (imgPath == undefined || imgPath == null) {
+            imgPath = "";
+        }
+        imgPath = imgPath.replace(/(^\s*)|(\s*$)/g, "");
+        if (imgPath.indexOf("file:///") != 0) {
+            imgPath = "";
+        }
+    }
+    return imgPath;
+}
+
+function setImgDisplay(isHD, imgPath) {
+    var imageBackground = document.getElementById("imageBackground");
+    if (isHD == undefined || isHD == false) {
+        imageBackground.style.width = 644;
+        imageBackground.style.height = 534;
+    } else {
+        imageBackground.style.width = 1280;
+        imageBackground.style.height = 720;
+    }
+    imageBackground.src = imgPath;
+}
+
+function setFontDisplay(isHD) {
+    var tipDiv = document.getElementById("tip");
+    if (isHD == undefined || isHD == false) {
+        tipDiv.className = "tipSD";
+        tipDiv.innerHTML = '<font color="#ffffff" style="font-size:24px;"><b>���ڽ��룬���Ժ�</b></font>';
+    } else {
+        tipDiv.className = "tipHD";
+        tipDiv.innerHTML = '<font color="#ffffff" style="font-size:48px;"><b>���ڽ��룬���Ժ�</b></font>';
+    }
+}
+
+var isHDFlag = getDefinitionFromStb();
+var imgURL = "";
+if (imgURL == "") {
+    setFontDisplay(isHDFlag);
+} else {
+    setImgDisplay(isHDFlag, imgURL);
+}</script>
+</body>
+</html>
