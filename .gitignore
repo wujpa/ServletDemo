@@ -2,7 +2,7 @@
 ./out
 .idea
 servletDemo.iml
-/web/WEB-INF/classes/myservlet/demo2.class
 /web/WEB-INF/web.xml
 /servletDemo.iml
-/web/WEB-INF/
+/web/WEB-INF/*
+/web/WEB-INF/classes/myservlet/
