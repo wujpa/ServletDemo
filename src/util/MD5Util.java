@@ -1,8 +1,9 @@
 package util;
 
-import java.security.MessageDigest;
+import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 
-import static oracle.jdbc.driver.OracleLog.byteToHexString;
+import java.security.MessageDigest;
+import java.util.UUID;
 
 public class MD5Util {
 	private final static String[] hexDigits = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d",
@@ -11,7 +12,7 @@ public class MD5Util {
 	private MD5Util(){}
 
 	public static MD5Util getInstance(){
-		if(md5Util != null){
+		if(md5Util == null){
 			md5Util = new MD5Util();
 		}
 		return md5Util;
@@ -47,5 +48,14 @@ public class MD5Util {
 		int d1 = n / 16;
 		int d2 = n % 16;
 		return hexDigits[d1] + hexDigits[d2];
+	}
+
+	public String UUID(){
+		return UUID.randomUUID().toString().replace("-","").toLowerCase();
+	}
+
+
+	public static void main(String[] args) {
+		System.out.println(UUID.randomUUID());
 	}
 }

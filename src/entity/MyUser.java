@@ -6,7 +6,7 @@ public class MyUser {
 	private String stuid;
 	private String password;
 
-	public MyUser(String stuname, int age, String stuid, String password) {
+	public MyUser(String stuid, String stuname, int age, String password) {
 		this.stuname = stuname;
 		this.age = age;
 		this.stuid = stuid;
