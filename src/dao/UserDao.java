@@ -10,4 +10,5 @@ public interface UserDao {
 	List<MyUser> getUserAll();
 	boolean delete(String stuid);
 	boolean update(String stuid, String name);
+	List query(String name);
 }
