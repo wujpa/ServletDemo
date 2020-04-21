@@ -6,3 +6,4 @@ servletDemo.iml
 /servletDemo.iml
 /web/WEB-INF/*
 /web/WEB-INF/classes/myservlet/
+/src/oracle.properties
