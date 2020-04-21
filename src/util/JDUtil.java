@@ -3,8 +3,7 @@ package util;
 
 import java.io.InputStream;
 import java.sql.*;
-import java.util.LinkedList;
-import java.util.Properties;
+import java.util.*;
 
 public class JDUtil {
 	private static Properties properties = new Properties();
@@ -16,7 +15,12 @@ public class JDUtil {
 
 	static {
 		try {
-			InputStream inputStream = ClassLoader.getSystemResourceAsStream("oracle.properties");
+			/**
+			 * tomcat中使用这个读取不到配置文件，
+			 */
+//			InputStream inputStream = ClassLoader.getSystemResourceAsStream("/oracle.properties");
+			InputStream inputStream = JDUtil.class.getClassLoader().getResourceAsStream("oracle.properties");
+
 			properties.load(inputStream);
 			usr = properties.getProperty("user");
 			url = properties.getProperty("url");
@@ -70,10 +74,9 @@ public class JDUtil {
 		}
 	}
 
-	public static void update(String sql ,Object[] o){
+	public static boolean update(String sql ,Object[] o){
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
 		try {
 			connection = getConnection();
 			preparedStatement = connection.prepareStatement(sql);
@@ -82,15 +85,17 @@ public class JDUtil {
 			}
 			//执行SQL语句
 			int d = preparedStatement.executeUpdate();
+			return d > 0 ? true : false;
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return false;
 		}finally {
 			close(connection,preparedStatement,null);
 		}
 	}
 
-	public static ResultSet query(String sql,Object[] objects){
+	public static List query(String sql,Object[] objects){
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -101,12 +106,33 @@ public class JDUtil {
 				preparedStatement.setObject(i+1,  objects[i]);
 			}
 			resultSet = preparedStatement.executeQuery();
-			return resultSet;
+			return convertResult(resultSet);
 		}catch (Exception e){
 			e.printStackTrace();
 			return null;
 		}finally {
 			close(connection,preparedStatement,resultSet);
+		}
+	}
+
+	public static List convertResult(ResultSet resultSet){
+		//获得结果集结构信息,元数据
+		List<Map<String, Object>> list = new ArrayList<>();
+		ResultSetMetaData md = null;
+		try {
+			md = resultSet.getMetaData();
+			int columnCount = md.getColumnCount();
+			while (resultSet.next()){
+				Map<String , Object> rowData = new HashMap<>();
+				for (int i = 1; i <= columnCount; i++){
+					rowData.put(md.getColumnName(i),resultSet.getObject(i));
+				}
+				list.add(rowData);
+			}
+			return list;
+		} catch (SQLException throwables) {
+			throwables.printStackTrace();
+			return null;
 		}
 	}
 }
